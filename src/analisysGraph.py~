@@ -1,0 +1,58 @@
+from math import pi
+import numpy
+import matplotlib
+import pylab as plt
+import rospy
+from ibeo_reader.msg import ibeo_points
+
+cnt = 0
+def plot_points(points):
+    global cnt
+    if cnt == 0:
+      fig1 = plt.figure(1)
+      plt.ion()
+      plt.clf()
+      ax = plt.subplot(221)
+      dang = []
+      prev = points.angles4[0]
+      for ang in points.angles4:
+	dang.append(ang - prev)
+	prev = ang
+      plt.plot(dang,color='b')
+      #plt.plot(points.angles4,color='b')
+      ax = plt.subplot(222)
+      dang = []
+      prev = points.angles3[0]
+      for ang in points.angles3:
+	dang.append(ang - prev)
+	prev = ang
+      plt.plot(dang,color='g')
+      #plt.plot(points.angles3,color='g')
+      ax = plt.subplot(223)
+      dang = []
+      prev = points.angles2[0]
+      for ang in points.angles2:
+	dang.append(ang - prev)
+	prev = ang
+      plt.plot(dang,color='r')
+      #plt.plot(points.angles2,color='r')
+      ax = plt.subplot(224)
+      dang = []
+      prev = points.angles1[0]
+      for ang in points.angles1:
+	dang.append(ang - prev)
+	prev = ang
+      plt.plot(dang,color='y')
+      #plt.plot(points.angles1,color='y')
+      plt.draw()
+      plt.ioff()
+    else:
+      if cnt == 5:
+	cnt = -1
+    cnt += 1
+
+print "starting GUI"
+rospy.init_node('ibeo_point_reader')
+sub = rospy.Subscriber('/SENSORS/IBEO/2',ibeo_points,plot_points)
+print "Subscribing to ",(sub.name)
+rospy.spin()
